@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cart — MaryamWear Boutique</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/responsive.css">
+  <style>
+    .cart-item-card {
+      background:#fff;border:1px solid var(--border);border-radius:14px;
+      padding:18px 20px;margin-bottom:14px;
+      display:flex;align-items:center;gap:16px;
+      transition:box-shadow 0.2s;
+    }
+    .cart-item-card:hover { box-shadow:var(--shadow); }
+    .cart-item-emoji {
+      width:72px;height:72px;min-width:72px;
+      background:var(--primary-lt);border-radius:10px;
+      display:flex;align-items:center;justify-content:center;font-size:2.2rem;
+    }
+    .cart-item-name { font-family:var(--font-head);font-size:1rem;font-weight:600;color:var(--dark);margin-bottom:3px; }
+    .cart-item-price { font-size:1.05rem;font-weight:700;color:var(--primary); }
+    .qty-control {
+      display:flex;align-items:center;gap:0;
+      border:1.5px solid var(--border);border-radius:8px;overflow:hidden;
+    }
+    .qty-btn {
+      width:34px;height:34px;border:none;background:#f8f8f8;
+      font-size:1.1rem;font-weight:700;cursor:pointer;
+      transition:background 0.15s;color:var(--dark);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .qty-btn:hover { background:var(--primary);color:#fff; }
+    .qty-num {
+      width:38px;text-align:center;font-size:0.92rem;
+      font-weight:700;color:var(--dark);border:none;
+      border-left:1.5px solid var(--border);border-right:1.5px solid var(--border);
+      background:#fff;height:34px;line-height:34px;
+    }
+    .remove-btn {
+      background:none;border:none;color:var(--muted);font-size:1.2rem;
+      cursor:pointer;transition:color 0.15s;padding:4px;border-radius:6px;
+      margin-left:auto;flex-shrink:0;
+    }
+    .remove-btn:hover { color:#c0392b;background:#fde8e8; }
+    .summary-card {
+      background:#fff;border:1px solid var(--border);border-radius:14px;padding:24px;
+      position:sticky;top:90px;
+    }
+    .summary-row {
+      display:flex;justify-content:space-between;align-items:center;
+      padding:9px 0;font-size:0.9rem;color:var(--text);
+    }
+    .summary-row.total {
+      border-top:2px solid var(--border);margin-top:8px;padding-top:14px;
+      font-size:1.1rem;font-weight:700;color:var(--dark);
+    }
+    .summary-row.total .amt { color:var(--primary);font-size:1.2rem; }
+    .coupon-row {
+      display:flex;gap:8px;margin:14px 0;
+    }
+    .coupon-input {
+      flex:1;border:1.5px solid var(--border);border-radius:8px;
+      padding:9px 13px;font-family:var(--font-body);font-size:0.88rem;
+      outline:none;transition:border-color 0.2s;text-transform:uppercase;letter-spacing:1px;
+    }
+    .coupon-input:focus { border-color:var(--primary); }
+    .coupon-msg { font-size:0.8rem;margin-top:4px;min-height:18px; }
+    .empty-cart {
+      text-align:center;padding:80px 20px;
+    }
+    .empty-cart-icon { font-size:5rem;margin-bottom:16px; }
+    .empty-cart h3 { font-family:var(--font-head);color:var(--dark);margin-bottom:8px; }
+    .wishlist-card {
+      background:#fff;border:1px solid var(--border);border-radius:12px;
+      overflow:hidden;transition:transform 0.2s,box-shadow 0.2s;
+    }
+    .wishlist-card:hover { transform:translateY(-4px);box-shadow:var(--shadow); }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <div class="page-header">
+    <div class="container">
+      <h1>Your Cart</h1>
+      <div class="breadcrumb-custom">
+        <a href="../index.html">Home</a><span>/</span><span>Cart</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container py-5">
+    <div class="row g-4">
+
+      <!-- Cart Items -->
+      <div class="col-lg-8">
+        <div id="cartContent"></div>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="col-lg-4">
+        <div class="summary-card" id="summaryCard" style="display:none;">
+          <h5 style="font-family:var(--font-head);margin-bottom:18px;">Order Summary</h5>
+
+          <div class="summary-row"><span>Subtotal</span><span id="sumSubtotal">Rs. 0</span></div>
+          <div class="summary-row" id="discountRow" style="display:none;color:var(--success);">
+            <span>Coupon discount</span><span id="sumDiscount">- Rs. 0</span>
+          </div>
+          <div class="summary-row"><span>Delivery</span><span id="sumDelivery">Rs. 200</span></div>
+          <div class="summary-row total"><span>Total</span><span class="amt" id="sumTotal">Rs. 0</span></div>
+
+          <!-- Coupon -->
+          <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border);">
+            <div style="font-size:0.82rem;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--dark);margin-bottom:8px;">
+              Have a coupon?
+            </div>
+            <div class="coupon-row">
+              <input type="text" id="couponInput" class="coupon-input" placeholder="ENTER CODE">
+              <button class="btn-primary-custom" onclick="applyCoupon()" style="padding:9px 16px;font-size:0.85rem;">Apply</button>
+            </div>
+            <div class="coupon-msg" id="couponMsg"></div>
+          </div>
+
+          <!-- Delivery note -->
+          <div id="freeDeliveryNote" style="display:none;background:var(--primary-lt);border-radius:8px;padding:10px 12px;margin:12px 0;font-size:0.82rem;color:var(--primary);font-weight:600;">
+            🎉 You qualify for FREE delivery!
+          </div>
+          <div id="nearFreeNote" style="display:none;background:#fff4e6;border-radius:8px;padding:10px 12px;margin:12px 0;font-size:0.82rem;color:var(--warning);">
+          </div>
+
+          <a href="checkout.html" id="checkoutBtn" class="btn-primary-custom w-100 mt-3" style="justify-content:center;text-decoration:none;">
+            Proceed to Checkout →
+          </a>
+          <a href="products.html" class="btn-outline-custom w-100 mt-2" style="justify-content:center;">
+            Continue Shopping
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wishlist Section -->
+    <div id="wishlistSection" style="display:none;margin-top:48px;">
+      <h4 style="font-family:var(--font-head);margin-bottom:4px;">Your Wishlist</h4>
+      <p style="color:var(--muted);font-size:0.9rem;margin-bottom:20px;">Items you saved for later</p>
+      <div class="row g-3" id="wishlistGrid"></div>
+    </div>
+  </div>
+
+  <div id="footer-placeholder"></div>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script type="module">
+    import { renderNavbar, renderFooter, showToast, updateCartCount } from '../js/ui.js';
+    import { getAll } from '../js/db.js';
+
+    renderNavbar('cart');
+    renderFooter();
+
+    // ── Coupons ────────────────────────────────────────────────
+    const COUPONS = {
+      'SAVE10':  { type:'percent', value:10,  label:'10% off' },
+      'SAVE20':  { type:'percent', value:20,  label:'20% off' },
+      'FLAT500': { type:'flat',    value:500, label:'Rs. 500 off' },
+      'MARYAM':  { type:'percent', value:15,  label:'15% off' },
+    };
+    const FREE_DELIVERY_THRESHOLD = 2999;
+    const DELIVERY_FEE = 200;
+
+    let appliedCoupon = JSON.parse(sessionStorage.getItem('mw_coupon') || 'null');
+
+    // ── Render Cart ────────────────────────────────────────────
+    function renderCart() {
+      const cart    = JSON.parse(localStorage.getItem('mw_cart') || '[]');
+      const content = document.getElementById('cartContent');
+
+      if (cart.length === 0) {
+        content.innerHTML = `
+          <div class="empty-cart">
+            <div class="empty-cart-icon">🛍️</div>
+            <h3>Your cart is empty</h3>
+            <p style="color:var(--muted);margin-bottom:24px;">Looks like you haven't added anything yet.</p>
+            <a href="products.html" class="btn-primary-custom" style="text-decoration:none;">Browse Products →</a>
+          </div>`;
+        document.getElementById('summaryCard').style.display = 'none';
+        renderWishlist();
+        return;
+      }
+
+      document.getElementById('summaryCard').style.display = 'block';
+
+      content.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;flex-wrap:wrap;gap:8px;">
+          <h5 style="font-family:var(--font-head);margin:0;">${cart.length} item${cart.length>1?'s':''} in your cart</h5>
+          <button onclick="clearCart()" style="background:none;border:none;color:var(--muted);font-size:0.85rem;cursor:pointer;text-decoration:underline;">Clear all</button>
+        </div>
+        ${cart.map(item => `
+          <div class="cart-item-card" id="cart-row-${item.id}">
+            <div class="cart-item-emoji">${item.emoji || '👗'}</div>
+            <div style="flex:1;min-width:0;">
+              <div class="cart-item-name">${item.name}</div>
+              <div class="cart-item-price">Rs. ${item.price.toLocaleString()}</div>
+              <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">per item</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:10px;">
+              <div class="qty-control">
+                <button class="qty-btn" onclick="changeQty('${item.id}',-1)">−</button>
+                <div class="qty-num">${item.qty}</div>
+                <button class="qty-btn" onclick="changeQty('${item.id}',+1)">+</button>
+              </div>
+              <div style="font-size:0.88rem;font-weight:700;color:var(--dark);">
+                Rs. ${(item.price * item.qty).toLocaleString()}
+              </div>
+            </div>
+            <button class="remove-btn" onclick="removeItem('${item.id}')" title="Remove">✕</button>
+          </div>`).join('')}`;
+
+      updateSummary(cart);
+      renderWishlist();
+    }
+
+    // ── Summary ────────────────────────────────────────────────
+    function updateSummary(cart) {
+      const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      let discount   = 0;
+
+      if (appliedCoupon) {
+        const c = COUPONS[appliedCoupon];
+        discount = c.type === 'percent'
+          ? Math.round(subtotal * c.value / 100)
+          : Math.min(c.value, subtotal);
+      }
+
+      const afterDiscount = subtotal - discount;
+      const delivery      = afterDiscount >= FREE_DELIVERY_THRESHOLD ? 0 : DELIVERY_FEE;
+      const total         = afterDiscount + delivery;
+
+      document.getElementById('sumSubtotal').textContent = `Rs. ${subtotal.toLocaleString()}`;
+      document.getElementById('sumDelivery').textContent = delivery === 0 ? 'FREE' : `Rs. ${delivery}`;
+      document.getElementById('sumTotal').textContent    = `Rs. ${total.toLocaleString()}`;
+
+      const discRow = document.getElementById('discountRow');
+      if (discount > 0) {
+        discRow.style.display = 'flex';
+        document.getElementById('sumDiscount').textContent = `- Rs. ${discount.toLocaleString()}`;
+      } else {
+        discRow.style.display = 'none';
+      }
+
+      // Free delivery notes
+      const freeNote  = document.getElementById('freeDeliveryNote');
+      const nearNote  = document.getElementById('nearFreeNote');
+      if (delivery === 0) {
+        freeNote.style.display = 'block';
+        nearNote.style.display = 'none';
+      } else {
+        freeNote.style.display = 'none';
+        const remaining = FREE_DELIVERY_THRESHOLD - afterDiscount;
+        if (remaining > 0 && remaining < 1500) {
+          nearNote.style.display  = 'block';
+          nearNote.textContent = `🚚 Add Rs. ${remaining.toLocaleString()} more for FREE delivery!`;
+        } else {
+          nearNote.style.display = 'none';
+        }
+      }
+
+      // Store total for checkout
+      sessionStorage.setItem('mw_order_total', JSON.stringify({ subtotal, discount, delivery, total, coupon: appliedCoupon }));
+    }
+
+    // ── Coupon ─────────────────────────────────────────────────
+    window.applyCoupon = function() {
+      const code = document.getElementById('couponInput').value.trim().toUpperCase();
+      const msg  = document.getElementById('couponMsg');
+
+      if (!code) { msg.style.color='#c0392b'; msg.textContent='Please enter a coupon code.'; return; }
+
+      if (COUPONS[code]) {
+        appliedCoupon = code;
+        sessionStorage.setItem('mw_coupon', JSON.stringify(code));
+        msg.style.color = 'var(--success)';
+        msg.textContent = `✓ "${code}" applied — ${COUPONS[code].label}!`;
+        showToast(`Coupon "${code}" applied!`, 'success');
+        const cart = JSON.parse(localStorage.getItem('mw_cart') || '[]');
+        updateSummary(cart);
+      } else {
+        msg.style.color = '#c0392b';
+        msg.textContent = '✕ Invalid coupon code.';
+        showToast('Invalid coupon code.', 'error');
+      }
+    };
+
+    // ── Qty change ─────────────────────────────────────────────
+    window.changeQty = function(id, delta) {
+      const cart = JSON.parse(localStorage.getItem('mw_cart') || '[]');
+      const item = cart.find(i => i.id === id);
+      if (!item) return;
+      item.qty = Math.max(1, item.qty + delta);
+      localStorage.setItem('mw_cart', JSON.stringify(cart));
+      updateCartCount();
+      renderCart();
+    };
+
+    // ── Remove item ────────────────────────────────────────────
+    window.removeItem = function(id) {
+      let cart = JSON.parse(localStorage.getItem('mw_cart') || '[]');
+      const item = cart.find(i => i.id === id);
+      cart = cart.filter(i => i.id !== id);
+      localStorage.setItem('mw_cart', JSON.stringify(cart));
+      updateCartCount();
+      showToast(`${item?.name || 'Item'} removed from cart.`);
+      renderCart();
+    };
+
+    // ── Clear all ──────────────────────────────────────────────
+    window.clearCart = function() {
+      localStorage.removeItem('mw_cart');
+      sessionStorage.removeItem('mw_coupon');
+      appliedCoupon = null;
+      updateCartCount();
+      renderCart();
+      showToast('Cart cleared.');
+    };
+
+    // ── Wishlist ───────────────────────────────────────────────
+    function renderWishlist() {
+      const wishlist = JSON.parse(localStorage.getItem('mw_wishlist') || '[]');
+      const section  = document.getElementById('wishlistSection');
+      if (wishlist.length === 0) { section.style.display = 'none'; return; }
+
+      const products = getAll('products');
+      const items    = wishlist.map(id => products.find(p => p.id === id)).filter(Boolean);
+      if (items.length === 0) { section.style.display = 'none'; return; }
+
+      section.style.display = 'block';
+      document.getElementById('wishlistGrid').innerHTML = items.map(p => {
+        const dp = p.onSale ? Math.round(p.price * 0.8) : p.price;
+        return `
+          <div class="col-md-3 col-6">
+            <div class="wishlist-card">
+              <div style="background:var(--primary-lt);height:120px;display:flex;align-items:center;justify-content:center;font-size:3rem;">
+                ${p.emoji || '👗'}
+              </div>
+              <div style="padding:12px;">
+                <div style="font-family:var(--font-head);font-size:0.9rem;font-weight:600;margin-bottom:4px;">${p.name}</div>
+                <div style="color:var(--primary);font-weight:700;font-size:0.95rem;margin-bottom:10px;">Rs. ${dp.toLocaleString()}</div>
+                <div style="display:flex;gap:6px;">
+                  <button class="btn-primary-custom" style="flex:1;padding:7px;font-size:0.78rem;justify-content:center;"
+                    onclick="moveToCart('${p.id}')">Add to Cart</button>
+                  <button onclick="removeWishlist('${p.id}',this)" style="background:#fde8e8;border:none;border-radius:7px;padding:7px 10px;cursor:pointer;font-size:0.9rem;" title="Remove">♥</button>
+                </div>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    window.moveToCart = function(id) {
+      const products = getAll('products');
+      const p        = products.find(x => x.id === id);
+      if (!p) return;
+      const cart   = JSON.parse(localStorage.getItem('mw_cart') || '[]');
+      const exists = cart.find(i => i.id === id);
+      if (exists) exists.qty += 1;
+      else cart.push({ id, name:p.name, price:p.onSale?Math.round(p.price*0.8):p.price, qty:1, emoji:p.emoji||'👗' });
+      localStorage.setItem('mw_cart', JSON.stringify(cart));
+      showToast(`${p.name} added to cart!`, 'success');
+      updateCartCount();
+      renderCart();
+    };
+
+    window.removeWishlist = function(id) {
+      let wl = JSON.parse(localStorage.getItem('mw_wishlist') || '[]');
+      wl = wl.filter(x => x !== id);
+      localStorage.setItem('mw_wishlist', JSON.stringify(wl));
+      renderCart();
+      showToast('Removed from wishlist.');
+    };
+
+    // ── Show applied coupon on load ────────────────────────────
+    if (appliedCoupon && COUPONS[appliedCoupon]) {
+      document.getElementById('couponInput').value = appliedCoupon;
+      const msg = document.getElementById('couponMsg');
+      msg.style.color  = 'var(--success)';
+      msg.textContent  = `✓ "${appliedCoupon}" applied — ${COUPONS[appliedCoupon].label}!`;
+    }
+
+    renderCart();
+  </script>
+</body>
+</html>

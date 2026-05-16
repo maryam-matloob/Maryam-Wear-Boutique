@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — MaryamWear Boutique</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     AUTH GATE
+══════════════════════════════════════════ -->
+<div id="authGate" style="
+  position:fixed;inset:0;background:linear-gradient(135deg,#1a1a2e,#2d1b25);
+  display:flex;align-items:center;justify-content:center;z-index:9999;">
+  <div style="background:#fff;border-radius:20px;padding:40px;width:360px;max-width:90%;text-align:center;box-shadow:0 24px 80px rgba(0,0,0,0.3);">
+    <div style="font-size:2.5rem;margin-bottom:8px;">🔐</div>
+    <h2 style="font-family:var(--font-head);font-size:1.5rem;margin-bottom:4px;color:var(--dark);">Admin Login</h2>
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:24px;">MaryamWear Boutique Control Panel</p>
+    <input type="password" id="adminPass" class="form-input-admin" placeholder="Enter admin password"
+      style="margin-bottom:12px;text-align:center;letter-spacing:3px;"
+      onkeydown="if(event.key==='Enter') adminLogin()">
+    <div id="authError" style="display:none;color:#c0392b;font-size:0.82rem;margin-bottom:12px;">
+      ✕ Incorrect password. Try <strong>admin123</strong>
+    </div>
+    <button class="btn-primary-custom w-100" onclick="adminLogin()" style="justify-content:center;">
+      Login to Admin Panel
+    </button>
+    <a href="../index.html" style="display:block;margin-top:16px;font-size:0.82rem;color:var(--muted);">← Back to Store</a>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ADMIN PANEL
+══════════════════════════════════════════ -->
+<div id="adminPanel" style="display:none;">
+<div class="admin-wrapper">
+
+  <!-- ── Sidebar ── -->
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="admin-sidebar-brand">
+      <div class="brand-name">Maryam<span>Wear</span></div>
+      <div class="brand-sub">Admin Dashboard</div>
+    </div>
+    <nav class="admin-nav">
+      <div class="admin-nav-label">Main</div>
+      <button class="admin-nav-item active" data-section="products" onclick="setNavActive(this);showAdminSection('products')">
+        <span class="nav-icon">📦</span> Products
+      </button>
+      <button class="admin-nav-item" data-section="orders" onclick="setNavActive(this);showAdminSection('orders')">
+        <span class="nav-icon">🛒</span> Orders
+      </button>
+
+      <div class="admin-nav-label">Store</div>
+      <a class="admin-nav-item" href="../index.html" target="_blank">
+        <span class="nav-icon">🏪</span> View Store
+      </a>
+      <a class="admin-nav-item" href="products.html" target="_blank">
+        <span class="nav-icon">🛍️</span> Shop Page
+      </a>
+
+      <div class="admin-nav-label">Account</div>
+      <button class="admin-nav-item" onclick="adminLogout()">
+        <span class="nav-icon">🚪</span> Logout
+      </button>
+    </nav>
+  </aside>
+
+  <!-- ── Main ── -->
+  <div class="admin-main">
+
+    <!-- Topbar -->
+    <div class="admin-topbar">
+      <div style="display:flex;align-items:center;gap:14px;">
+        <button onclick="document.getElementById('adminSidebar').classList.toggle('open')"
+          style="display:none;background:none;border:none;font-size:1.4rem;cursor:pointer;" id="hamburgerBtn">☰</button>
+        <div class="admin-topbar-title" id="topbarTitle">Products</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span style="font-size:0.82rem;color:var(--muted);">Logged in as <strong style="color:var(--dark);">Admin</strong></span>
+        <button class="action-btn btn-delete" onclick="adminLogout()" style="padding:6px 12px;">Logout</button>
+      </div>
+    </div>
+
+    <!-- Content -->
+    <div class="admin-content" id="adminContentArea">
+
+      <!-- ════════════════════════════════
+           PRODUCTS SECTION
+      ════════════════════════════════ -->
+      <div id="section-products">
+
+        <!-- Stat Cards -->
+        <div class="row g-3 mb-4">
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#e8f5ee;">📦</div>
+              <div>
+                <div class="stat-num" id="statTotal">0</div>
+                <div class="stat-label">Total Products</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#e6f1fb;">✅</div>
+              <div>
+                <div class="stat-num" id="statInStock">0</div>
+                <div class="stat-label">In Stock</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon" style="background:var(--primary-lt);">🏷️</div>
+              <div>
+                <div class="stat-num" id="statOnSale">0</div>
+                <div class="stat-label">On Sale</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-lg-3">
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#fff4e6;">🛒</div>
+              <div>
+                <div class="stat-num" id="statOrders">0</div>
+                <div class="stat-label">Total Orders</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── ADD PRODUCT FORM ─────────── -->
+        <div id="formSection" class="admin-form-section mb-4">
+          <div class="admin-card">
+            <div class="admin-card-header">
+              <div class="admin-card-title" id="formSectionTitle">Add New Product</div>
+              <button class="action-btn btn-delete" onclick="cancelForm()">✕ Cancel</button>
+            </div>
+            <div class="admin-card-body">
+              <form id="productForm" onsubmit="event.preventDefault(); submitProduct();">
+
+                <div class="form-row">
+                  <!-- Product Name -->
+                  <div class="form-group">
+                    <label class="form-label-admin">Product Name <span class="required">*</span></label>
+                    <input type="text" id="fName" class="form-input-admin" placeholder="e.g. Zara Lawn 3-Piece">
+                    <div class="error-msg" id="errName"></div>
+                  </div>
+                  <!-- Category -->
+                  <div class="form-group">
+                    <label class="form-label-admin">Category <span class="required">*</span></label>
+                    <select id="fCategory" class="form-input-admin">
+                      <option value="lawn">🌸 Lawn Collection</option>
+                      <option value="formal">👑 Formal Wear</option>
+                      <option value="casual">👗 Casual Wear</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <!-- Price -->
+                  <div class="form-group">
+                    <label class="form-label-admin">Original Price (Rs.) <span class="required">*</span></label>
+                    <input type="number" id="fPrice" class="form-input-admin" placeholder="e.g. 3500" min="1">
+                    <div class="error-msg" id="errPrice"></div>
+                  </div>
+                  <!-- Stock -->
+                  <div class="form-group">
+                    <label class="form-label-admin">Stock Quantity <span class="required">*</span></label>
+                    <input type="number" id="fStock" class="form-input-admin" placeholder="e.g. 20" min="0">
+                    <div class="error-msg" id="errStock"></div>
+                  </div>
+                </div>
+
+                <div class="form-row">
+                  <!-- Emoji -->
+                  <div class="form-group">
+                    <label class="form-label-admin">Emoji Icon</label>
+                    <input type="text" id="fEmoji" class="form-input-admin" placeholder="e.g. 👗 🌸 👑" maxlength="4">
+                  </div>
+                  <!-- Colors -->
+                  <div class="form-group">
+                    <label class="form-label-admin">Colors (comma separated)</label>
+                    <input type="text" id="fColors" class="form-input-admin" placeholder="e.g. Pink, Blue, White">
+                  </div>
+                </div>
+
+                <!-- Description -->
+                <div class="form-group">
+                  <label class="form-label-admin">Description</label>
+                  <textarea id="fDescription" class="form-input-admin" rows="3"
+                    placeholder="Brief description of the product..."></textarea>
+                </div>
+
+                <!-- Sizes -->
+                <div class="form-group">
+                  <label class="form-label-admin">Available Sizes</label>
+                  <div class="checkbox-group">
+                    <label class="checkbox-item"><input type="checkbox" class="size-check" value="S"> S</label>
+                    <label class="checkbox-item"><input type="checkbox" class="size-check" value="M"> M</label>
+                    <label class="checkbox-item"><input type="checkbox" class="size-check" value="L"> L</label>
+                    <label class="checkbox-item"><input type="checkbox" class="size-check" value="XL"> XL</label>
+                    <label class="checkbox-item"><input type="checkbox" class="size-check" value="XXL"> XXL</label>
+                    <label class="checkbox-item"><input type="checkbox" class="size-check" value="Unstitched"> Unstitched</label>
+                  </div>
+                </div>
+
+                <!-- Flags -->
+                <div class="form-group">
+                  <label class="form-label-admin">Product Flags</label>
+                  <div class="checkbox-group">
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="fOnSale">
+                      🏷️ Mark as Sale (20% off applied automatically)
+                    </label>
+                    <label class="checkbox-item">
+                      <input type="checkbox" id="fIsNew">
+                      ✨ Mark as New Arrival
+                    </label>
+                  </div>
+                </div>
+
+                <!-- Submit -->
+                <div style="display:flex;gap:12px;flex-wrap:wrap;">
+                  <button type="submit" class="btn-primary-custom" id="formSubmitBtn">
+                    + Add Product
+                  </button>
+                  <button type="button" class="btn-outline-custom" onclick="cancelForm()">
+                    Cancel
+                  </button>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── PRODUCT TABLE ─────────────── -->
+        <div id="tableSection" class="admin-card">
+          <div class="admin-card-header">
+            <div class="admin-card-title">All Products</div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <!-- Table search -->
+              <div class="table-search-wrap">
+                <input type="text" class="table-search" placeholder="Search products..."
+                  oninput="refreshTable(this.value)">
+              </div>
+              <!-- Add button -->
+              <button class="btn-primary-custom" onclick="openAddForm()">
+                + Add Product
+              </button>
+            </div>
+          </div>
+          <!-- Scrollable table wrapper -->
+          <div style="overflow-x:auto;">
+            <table class="product-table">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Tags</th>
+                  <th>Added</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productTableBody">
+                <tr><td colspan="7" style="text-align:center;padding:30px;color:var(--muted);">Loading...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /section-products -->
+
+      <!-- ════════════════════════════════
+           ORDERS SECTION
+      ════════════════════════════════ -->
+      <div id="section-orders" style="display:none;">
+        <div class="admin-card">
+          <div class="admin-card-header">
+            <div class="admin-card-title">Orders</div>
+          </div>
+          <div class="admin-card-body" id="ordersBody">
+            <div style="text-align:center;padding:40px;color:var(--muted);">
+              <div style="font-size:3rem;margin-bottom:12px;">🛒</div>
+              <h4 style="font-family:var(--font-head);color:var(--dark);margin-bottom:6px;">No orders yet</h4>
+              <p style="font-size:0.9rem;">Orders placed through the checkout page will appear here.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </div><!-- /admin-main -->
+</div><!-- /admin-wrapper -->
+</div><!-- /adminPanel -->
+
+<!-- ── Delete Confirm Overlay ── -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-icon">🗑️</div>
+    <div class="confirm-title">Delete Product?</div>
+    <div class="confirm-msg">
+      Are you sure you want to delete <strong id="deleteProductName"></strong>?<br>
+      This action cannot be undone.
+    </div>
+    <div style="display:flex;gap:10px;justify-content:center;">
+      <button class="btn-outline-custom" onclick="cancelDelete()">Cancel</button>
+      <button class="btn-primary-custom" onclick="executeDelete()"
+        style="background:var(--primary);">Yes, Delete</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module">
+  import {
+    getAll, getById, create, update, remove, seedProducts
+  } from '../js/db.js';
+  import { showToast } from '../js/ui.js';
+
+  // ── Constants ─────────────────────────────────────────────────
+  const COLLECTION = 'products';
+  const ADMIN_PASS = 'admin123';
+  let editingId    = null;
+  let deleteTarget = null;
+  let tableSearch  = '';
+
+  // ── Seed demo data ────────────────────────────────────────────
+  seedProducts();
+
+  // ══════════════════════════════════════════════════════════════
+  //  AUTH
+  // ══════════════════════════════════════════════════════════════
+  function checkAuth() {
+    const authed = localStorage.getItem('mw_admin') === 'true';
+    document.getElementById('authGate').style.display   = authed ? 'none' : 'flex';
+    document.getElementById('adminPanel').style.display = authed ? 'flex' : 'none';
+    if (authed) { refreshStats(); refreshTable(''); }
+  }
+
+  window.adminLogin = function() {
+    const pass = document.getElementById('adminPass').value;
+    const err  = document.getElementById('authError');
+    if (pass === ADMIN_PASS) {
+      localStorage.setItem('mw_admin', 'true');
+      err.style.display = 'none';
+      document.getElementById('adminPass').classList.remove('error');
+      checkAuth();
+      showToast('Welcome back, Admin!', 'success');
+    } else {
+      err.style.display = 'block';
+      document.getElementById('adminPass').classList.add('error');
+    }
+  };
+
+  window.adminLogout = function() {
+    localStorage.removeItem('mw_admin');
+    checkAuth();
+  };
+
+  // ══════════════════════════════════════════════════════════════
+  //  STATS
+  // ══════════════════════════════════════════════════════════════
+  function refreshStats() {
+    const products = getAll(COLLECTION);
+    const orders   = getAll('orders');
+    document.getElementById('statTotal').textContent   = products.length;
+    document.getElementById('statInStock').textContent = products.filter(p => p.stock > 0).length;
+    document.getElementById('statOnSale').textContent  = products.filter(p => p.onSale).length;
+    document.getElementById('statOrders').textContent  = orders.length;
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  //  TABLE
+  // ══════════════════════════════════════════════════════════════
+  window.refreshTable = function(search = tableSearch) {
+    tableSearch = search;
+    let products = getAll(COLLECTION);
+    if (search.trim()) {
+      const q = search.toLowerCase();
+      products = products.filter(p =>
+        p.name.toLowerCase().includes(q) || p.category.toLowerCase().includes(q)
+      );
+    }
+    const tbody = document.getElementById('productTableBody');
+    if (!tbody) return;
+    if (products.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:40px;color:var(--muted);">
+        ${search ? '🔍 No products match your search.' : '📦 No products yet. Click "+ Add Product" to start!'}
+      </td></tr>`;
+      return;
+    }
+    tbody.innerHTML = products.map(p => {
+      const dp = p.onSale ? Math.round(p.price * 0.8) : p.price;
+      let stockBadge;
+      if (p.stock === 0)     stockBadge = `<span class="status-badge status-out">Out of Stock</span>`;
+      else if (p.stock <= 5) stockBadge = `<span class="status-badge status-low-stock">Low (${p.stock})</span>`;
+      else                   stockBadge = `<span class="status-badge status-in-stock">In Stock (${p.stock})</span>`;
+      return `<tr>
+        <td>
+          <div class="product-name-cell">
+            <div class="product-emoji-thumb">${p.emoji || '👗'}</div>
+            <div>
+              <div style="font-weight:600;color:var(--dark);font-size:0.88rem;">${p.name}</div>
+              <div style="font-size:0.76rem;color:var(--muted);margin-top:1px;">${(p.sizes||[]).join(', ')}</div>
+            </div>
+          </div>
+        </td>
+        <td style="text-transform:capitalize;font-size:0.85rem;">${p.category}</td>
+        <td>
+          <div style="font-weight:700;color:var(--primary);">Rs. ${dp.toLocaleString()}</div>
+          ${p.onSale ? `<div style="font-size:0.75rem;color:var(--muted);text-decoration:line-through;">Rs. ${p.price.toLocaleString()}</div>` : ''}
+        </td>
+        <td>${stockBadge}</td>
+        <td>
+          ${p.onSale ? '<span class="status-badge status-sale">Sale</span> ' : ''}
+          ${p.isNew  ? '<span class="status-badge status-in-stock">New</span>' : ''}
+          ${!p.onSale && !p.isNew ? '<span style="color:var(--muted);font-size:0.82rem;">—</span>' : ''}
+        </td>
+        <td style="font-size:0.78rem;color:var(--muted);">
+          ${p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-PK') : '—'}
+        </td>
+        <td>
+          <div style="display:flex;gap:6px;">
+            <button class="action-btn btn-edit"   onclick="openEditForm('${p.id}')">✏️ Edit</button>
+            <button class="action-btn btn-delete" onclick="confirmDelete('${p.id}','${p.name.replace(/'/g,"\\'")}')">🗑 Delete</button>
+          </div>
+        </td>
+      </tr>`;
+    }).join('');
+  };
+
+  // ══════════════════════════════════════════════════════════════
+  //  FORM OPEN / CLOSE
+  // ══════════════════════════════════════════════════════════════
+  window.openAddForm = function() {
+    editingId = null;
+    clearForm();
+    document.getElementById('formSectionTitle').textContent = 'Add New Product';
+    document.getElementById('formSubmitBtn').textContent    = '+ Add Product';
+    document.getElementById('formSection').classList.add('visible');
+    document.getElementById('formSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  window.openEditForm = function(id) {
+    const p = getById(COLLECTION, id);
+    if (!p) return;
+    editingId = id;
+    document.getElementById('fName').value        = p.name        || '';
+    document.getElementById('fCategory').value    = p.category    || 'lawn';
+    document.getElementById('fPrice').value       = p.price       || '';
+    document.getElementById('fStock').value       = p.stock       || '';
+    document.getElementById('fEmoji').value       = p.emoji       || '';
+    document.getElementById('fDescription').value = p.description || '';
+    document.getElementById('fColors').value      = (p.colors||[]).join(', ');
+    document.getElementById('fOnSale').checked    = !!p.onSale;
+    document.getElementById('fIsNew').checked     = !!p.isNew;
+    document.querySelectorAll('.size-check').forEach(cb => {
+      cb.checked = (p.sizes||[]).includes(cb.value);
+    });
+    document.getElementById('formSectionTitle').textContent = 'Edit Product';
+    document.getElementById('formSubmitBtn').textContent    = '💾 Save Changes';
+    document.getElementById('formSection').classList.add('visible');
+    document.getElementById('formSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  window.cancelForm = function() {
+    clearForm();
+    document.getElementById('formSection').classList.remove('visible');
+  };
+
+  function clearForm() {
+    document.getElementById('productForm').reset();
+    editingId = null;
+    document.querySelectorAll('.form-input-admin').forEach(el => el.classList.remove('error'));
+    document.querySelectorAll('.error-msg').forEach(el => el.classList.remove('visible'));
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  //  FORM SUBMIT — CREATE or UPDATE
+  // ══════════════════════════════════════════════════════════════
+  window.submitProduct = function() {
+    if (!validateForm()) return;
+    const sizes  = [...document.querySelectorAll('.size-check:checked')].map(cb => cb.value);
+    const colors = document.getElementById('fColors').value.split(',').map(s => s.trim()).filter(Boolean);
+    const data   = {
+      name:        document.getElementById('fName').value.trim(),
+      category:    document.getElementById('fCategory').value,
+      price:       Number(document.getElementById('fPrice').value),
+      stock:       Number(document.getElementById('fStock').value),
+      emoji:       document.getElementById('fEmoji').value.trim() || '👗',
+      description: document.getElementById('fDescription').value.trim(),
+      sizes, colors,
+      onSale: document.getElementById('fOnSale').checked,
+      isNew:  document.getElementById('fIsNew').checked,
+      image:  '',
+    };
+    if (editingId) {
+      update(COLLECTION, editingId, data);
+      showToast(`"${data.name}" updated!`, 'success');
+    } else {
+      create(COLLECTION, data);
+      showToast(`"${data.name}" added to catalog!`, 'success');
+    }
+    clearForm();
+    document.getElementById('formSection').classList.remove('visible');
+    refreshStats();
+    refreshTable('');
+  };
+
+  function validateForm() {
+    let valid = true;
+    const rules = [
+      { id:'fName',  errId:'errName',  check: v => v.trim().length >= 3, msg:'Name must be at least 3 characters.' },
+      { id:'fPrice', errId:'errPrice', check: v => Number(v) > 0,        msg:'Price must be greater than 0.'       },
+      { id:'fStock', errId:'errStock', check: v => Number(v) >= 0,       msg:'Stock cannot be negative.'           },
+    ];
+    rules.forEach(({ id, errId, check, msg }) => {
+      const el  = document.getElementById(id);
+      const err = document.getElementById(errId);
+      const ok  = check(el.value);
+      el.classList.toggle('error', !ok);
+      if (err) { err.textContent = msg; err.classList.toggle('visible', !ok); }
+      if (!ok) valid = false;
+    });
+    return valid;
+  }
+
+  // ══════════════════════════════════════════════════════════════
+  //  DELETE
+  // ══════════════════════════════════════════════════════════════
+  window.confirmDelete = function(id, name) {
+    deleteTarget = id;
+    document.getElementById('deleteProductName').textContent = name;
+    document.getElementById('confirmOverlay').classList.add('visible');
+  };
+
+  window.cancelDelete = function() {
+    deleteTarget = null;
+    document.getElementById('confirmOverlay').classList.remove('visible');
+  };
+
+  window.executeDelete = function() {
+    if (!deleteTarget) return;
+    const p = getById(COLLECTION, deleteTarget);
+    remove(COLLECTION, deleteTarget);
+    document.getElementById('confirmOverlay').classList.remove('visible');
+    showToast(`"${p?.name || 'Product'}" deleted.`, 'error');
+    deleteTarget = null;
+    refreshStats();
+    refreshTable('');
+  };
+
+  // ══════════════════════════════════════════════════════════════
+  //  SECTION SWITCHER + NAV
+  // ══════════════════════════════════════════════════════════════
+  window.showAdminSection = function(section) {
+    document.getElementById('section-products').style.display = section === 'products' ? 'block' : 'none';
+    document.getElementById('section-orders').style.display   = section === 'orders'   ? 'block' : 'none';
+    document.getElementById('topbarTitle').textContent = section === 'products' ? 'Products' : 'Orders';
+    if (section === 'orders') renderOrders();
+  };
+
+  window.setNavActive = function(btn) {
+    document.querySelectorAll('.admin-nav-item').forEach(el => el.classList.remove('active'));
+    btn.classList.add('active');
+  };
+
+  // ── Orders ────────────────────────────────────────────────────
+  function renderOrders() {
+    const orders = getAll('orders');
+    const body   = document.getElementById('ordersBody');
+    if (orders.length === 0) {
+      body.innerHTML = `<div style="text-align:center;padding:40px;color:var(--muted);">
+        <div style="font-size:3rem;margin-bottom:12px;">🛒</div>
+        <h4 style="font-family:var(--font-head);color:var(--dark);margin-bottom:6px;">No orders yet</h4>
+        <p style="font-size:0.9rem;">Orders will appear here after customers check out.</p>
+      </div>`; return;
+    }
+    body.innerHTML = `<div style="overflow-x:auto;">
+      <table class="product-table">
+        <thead><tr>
+          <th>Order ID</th><th>Customer</th><th>Items</th>
+          <th>Total</th><th>Payment</th><th>Date</th>
+        </tr></thead>
+        <tbody>
+          ${orders.map(o => `<tr>
+            <td style="font-family:monospace;font-size:0.78rem;">${o.id.slice(-8)}</td>
+            <td><strong>${o.customer?.name||'—'}</strong><br>
+              <span style="font-size:0.75rem;color:var(--muted);">${o.customer?.city||''}</span></td>
+            <td>${(o.items||[]).length} item(s)</td>
+            <td style="color:var(--primary);font-weight:700;">Rs. ${(o.total||0).toLocaleString()}</td>
+            <td><span class="status-badge status-in-stock">${o.paymentMethod||'COD'}</span></td>
+            <td style="font-size:0.78rem;color:var(--muted);">
+              ${o.createdAt ? new Date(o.createdAt).toLocaleDateString('en-PK') : '—'}
+            </td>
+          </tr>`).join('')}
+        </tbody>
+      </table></div>`;
+  }
+
+  // ── Boot ──────────────────────────────────────────────────────
+  checkAuth();
+</script>
+</body>
+</html>
