@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>Admin Panel</title>
+
+  <link
+    rel="stylesheet"
+    href="css/style.css"
+  >
+
+</head>
+<body>
+
+<header>
+
+  <nav class="navbar">
+
+    <div class="logo">
+      Admin Panel
+    </div>
+
+  </nav>
+
+</header>
+
+<div class="admin-container">
+
+  <h1>Add Product</h1>
+
+  <input
+    type="text"
+    id="name"
+    placeholder="Product Name"
+  >
+
+  <input
+    type="number"
+    id="price"
+    placeholder="Product Price"
+  >
+
+  <textarea
+    id="description"
+    placeholder="Product Description"
+  ></textarea>
+
+  <input
+    type="file"
+    id="image"
+    accept="image/*"
+  >
+
+  <button onclick="addProduct()">
+    Add Product
+  </button>
+
+</div>
+
+<section
+  class="products"
+  id="adminProducts"
+></section>
+
+<script src="js/admin.js"></script>
+
+</body>
+</html>
