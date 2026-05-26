@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — Maryam Wear Boutique</title>
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"/>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet"/>
+  <!-- Custom CSS (shared) -->
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body style="background:#f4f6f9;">
+
+  <!-- ═══════════════════════════════════════
+       ADMIN NAVBAR — visually distinct (dark navy + gold)
+  ═══════════════════════════════════════ -->
+  <nav class="navbar navbar-expand-lg navbar-dark sticky-top" id="adminNav">
+    <div class="container-fluid px-4">
+      <a class="navbar-brand font-playfair" href="admin.html">
+        <i class="bi bi-shield-lock-fill me-2" style="color:var(--accent)"></i>
+        Maryam Wear · <span style="color:var(--accent)">Admin Panel</span>
+      </a>
+      <div class="ms-auto d-flex align-items-center gap-3">
+        <span class="badge bg-warning text-dark fw-bold px-3 py-2">
+          <i class="bi bi-person-fill me-1"></i>Administrator
+        </span>
+        <a href="index.html" class="btn btn-outline-light btn-sm">
+          <i class="bi bi-shop me-1"></i>View Store
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container-fluid px-4 py-4">
+
+    <!-- ═══════════════════════════════════════
+         STATS SECTION (3 required by rubric)
+    ═══════════════════════════════════════ -->
+    <div class="row g-3 mb-4">
+
+      <div class="col-sm-6 col-xl-3">
+        <div class="admin-stat-card" style="background:white;">
+          <div class="stat-icon" style="background:#f7e6ef;">
+            <i class="bi bi-box-seam-fill" style="color:var(--primary)"></i>
+          </div>
+          <div>
+            <div class="stat-label">Total Products</div>
+            <div class="stat-value" id="stat-products">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-xl-3">
+        <div class="admin-stat-card" style="background:white;">
+          <div class="stat-icon" style="background:#e7f3ff;">
+            <i class="bi bi-bag-check-fill" style="color:#0d6efd"></i>
+          </div>
+          <div>
+            <div class="stat-label">Total Orders</div>
+            <div class="stat-value" id="stat-orders">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-xl-3">
+        <div class="admin-stat-card" style="background:white;">
+          <div class="stat-icon" style="background:#d1e7dd;">
+            <i class="bi bi-currency-exchange" style="color:#198754"></i>
+          </div>
+          <div>
+            <div class="stat-label">Total Revenue</div>
+            <div class="stat-value" id="stat-revenue">—</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6 col-xl-3">
+        <div class="admin-stat-card" style="background:white;">
+          <div class="stat-icon" style="background:#fff3cd;">
+            <i class="bi bi-hourglass-split" style="color:#ffc107"></i>
+          </div>
+          <div>
+            <div class="stat-label">Pending Orders</div>
+            <div class="stat-value" id="stat-pending">—</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         MAIN CONTENT AREA (Products + Orders)
+    ═══════════════════════════════════════ -->
+    <div class="row g-4">
+
+      <!-- LEFT COLUMN: Add/Edit Product Form -->
+      <div class="col-lg-4">
+        <div class="admin-form-card">
+          <h5 class="admin-section-header">
+            <i class="bi bi-plus-circle me-2 text-primary"></i>
+            <span id="formTitle">Add New Product</span>
+          </h5>
+
+          <!-- Product Form Success/Error -->
+          <div id="productFormAlert" class="d-none mb-3"></div>
+
+          <form id="productForm" novalidate>
+            <input type="hidden" id="editProductId"/>
+
+            <div class="mb-3">
+              <label for="pName" class="form-label fw-semibold">Product Name <span class="text-danger">*</span></label>
+              <input type="text" class="form-control" id="pName" placeholder="e.g. Embroidered Lawn Suit"/>
+              <div class="invalid-feedback" id="err-pName"></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="pCategory" class="form-label fw-semibold">Category <span class="text-danger">*</span></label>
+              <select class="form-select" id="pCategory">
+                <option value="">-- Select category --</option>
+                <option>Lawn</option>
+                <option>Chiffon</option>
+                <option>Kurti</option>
+                <option>Bridal</option>
+                <option>Winter</option>
+              </select>
+              <div class="invalid-feedback" id="err-pCategory"></div>
+            </div>
+
+            <div class="row g-2 mb-3">
+              <div class="col-6">
+                <label for="pPrice" class="form-label fw-semibold">Price (Rs.) <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="pPrice" placeholder="0" min="1"/>
+                <div class="invalid-feedback" id="err-pPrice"></div>
+              </div>
+              <div class="col-6">
+                <label for="pStock" class="form-label fw-semibold">Stock <span class="text-danger">*</span></label>
+                <input type="number" class="form-control" id="pStock" placeholder="0" min="0"/>
+                <div class="invalid-feedback" id="err-pStock"></div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="pDescription" class="form-label fw-semibold">Description <span class="text-danger">*</span></label>
+              <textarea class="form-control" id="pDescription" rows="3" placeholder="Product description..."></textarea>
+              <div class="invalid-feedback" id="err-pDescription"></div>
+            </div>
+
+            <div class="mb-3">
+              <label for="pImage" class="form-label fw-semibold">Image URL</label>
+              <input type="url" class="form-control" id="pImage" placeholder="https://..."/>
+            </div>
+
+            <div class="mb-4 form-check">
+              <input type="checkbox" class="form-check-input" id="pFeatured"/>
+              <label class="form-check-label fw-semibold" for="pFeatured">Mark as Featured</label>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary flex-fill" id="productSubmitBtn">
+                <i class="bi bi-plus-circle me-1"></i>Add Product
+              </button>
+              <button type="button" class="btn btn-outline-secondary" id="cancelEditBtn" onclick="cancelEdit()" style="display:none">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Products Table + Orders Table -->
+      <div class="col-lg-8">
+
+        <!-- Products Table -->
+        <div class="mb-4">
+          <h5 class="admin-section-header font-playfair">
+            <i class="bi bi-grid-3x3-gap me-2"></i>All Products
+          </h5>
+
+          <div id="productsLoadingState" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="text-muted mt-2 small">Loading products...</p>
+          </div>
+
+          <div id="productsErrorState" class="alert alert-danger d-none">
+            <i class="bi bi-exclamation-triangle me-2"></i>
+            Cannot connect to JSON Server. Run: <code>npx json-server --watch db.json</code>
+          </div>
+
+          <div class="table-responsive admin-table d-none" id="productsTableWrapper">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Category</th>
+                  <th>Price</th>
+                  <th>Stock</th>
+                  <th>Featured</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="productsTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Orders Table -->
+        <div>
+          <h5 class="admin-section-header font-playfair">
+            <i class="bi bi-receipt me-2"></i>All Orders
+          </h5>
+
+          <div id="ordersLoadingState" class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="text-muted mt-2 small">Loading orders...</p>
+          </div>
+
+          <div class="table-responsive admin-table d-none" id="ordersTableWrapper">
+            <table class="table table-hover mb-0">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Customer</th>
+                  <th>Product</th>
+                  <th>Qty</th>
+                  <th>Total</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="ordersTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+      </div><!-- /col -->
+    </div><!-- /row -->
+  </div><!-- /container -->
+
+  <!-- ═══════════════════════════════════════
+       DELETE CONFIRMATION MODAL
+  ═══════════════════════════════════════ -->
+  <div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <h6 class="modal-title fw-bold text-danger">
+            <i class="bi bi-exclamation-triangle me-2"></i>Confirm Delete
+          </h6>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted mb-0">Are you sure you want to delete <strong id="deleteProductName"></strong>? This cannot be undone.</p>
+        </div>
+        <div class="modal-footer border-0 pt-0">
+          <button class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button class="btn btn-sm btn-danger" id="confirmDeleteBtn">
+            <i class="bi bi-trash me-1"></i>Delete
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Admin JS -->
+  <script src="admin.js"></script>
+</body>
+</html>

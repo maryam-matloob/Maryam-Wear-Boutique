@@ -1,0 +1,347 @@
+/* ═══════════════════════════════════════════════
+   MARYAM WEAR BOUTIQUE — style.css
+   Bootstrap 5 base + custom boutique overrides
+═══════════════════════════════════════════════ */
+
+/* ── CSS Variables (single source of truth) ── */
+:root {
+  --primary:        #b5467a;   /* rose pink */
+  --primary-dark:   #8c2f5c;
+  --primary-light:  #f7e6ef;
+  --accent:         #d4af37;   /* gold */
+  --accent-light:   #fdf6dc;
+  --dark:           #1a1a2e;
+  --text-muted:     #777;
+  --card-radius:    16px;
+  --transition:     0.3s ease;
+}
+
+/* ── Base & Typography ── */
+body {
+  font-family: 'Lato', sans-serif;
+  background: #fdfaf7;
+  color: #2d2d2d;
+}
+
+.font-playfair { font-family: 'Playfair Display', serif; }
+
+/* ── Navbar (User Panel) ── */
+#mainNav {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  box-shadow: 0 2px 20px rgba(181, 70, 122, 0.3);
+  padding: 0.8rem 0;
+}
+
+.brand-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  letter-spacing: 0.5px;
+}
+
+/* ── Admin Navbar (visually distinct — rubric requirement) ── */
+#adminNav {
+  background: linear-gradient(135deg, #1a1a2e, #16213e) !important;
+  border-bottom: 3px solid var(--accent);
+}
+
+/* ── Hero Section ── */
+.hero-section {
+  min-height: 90vh;
+  background:
+    linear-gradient(rgba(26, 26, 46, 0.65), rgba(140, 47, 92, 0.55)),
+    url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=1400&fit=crop') center/cover no-repeat;
+  position: relative;
+}
+
+.hero-tagline {
+  font-size: 1rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 300;
+}
+
+/* ── Section Titles ── */
+.section-title {
+  font-size: 2.2rem;
+  color: var(--primary-dark);
+  position: relative;
+  display: inline-block;
+  padding-bottom: 12px;
+}
+
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 50%; transform: translateX(-50%);
+  width: 60px; height: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+/* ── Filter Buttons ── */
+.btn-filter {
+  border: 2px solid var(--primary);
+  color: var(--primary);
+  border-radius: 50px;
+  padding: 6px 22px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: var(--transition);
+}
+
+.btn-filter:hover,
+.btn-filter.active {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(181, 70, 122, 0.3);
+}
+
+/* ── Product Cards ── */
+.product-card {
+  border: none;
+  border-radius: var(--card-radius);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  transition: var(--transition);
+  background: white;
+  height: 100%;
+}
+
+.product-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(181, 70, 122, 0.2);
+}
+
+.product-img-wrapper {
+  position: relative;
+  height: 280px;
+  overflow: hidden;
+}
+
+.product-img-wrapper img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-img-wrapper img {
+  transform: scale(1.08);
+}
+
+.badge-featured {
+  position: absolute;
+  top: 12px; left: 12px;
+  background: var(--accent);
+  color: #2d2d2d;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 4px 12px;
+  border-radius: 50px;
+}
+
+.badge-category {
+  position: absolute;
+  top: 12px; right: 12px;
+  background: rgba(255,255,255,0.9);
+  color: var(--primary);
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 50px;
+}
+
+.product-body {
+  padding: 1.2rem;
+}
+
+.product-name {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.05rem;
+  color: var(--dark);
+  margin-bottom: 4px;
+}
+
+.product-price {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.product-stock {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.btn-add-cart {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 2px solid var(--primary);
+  border-radius: 50px;
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.btn-add-cart:hover {
+  background: var(--primary);
+  color: white;
+}
+
+.btn-order-now {
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 6px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  transition: var(--transition);
+  width: 100%;
+}
+
+.btn-order-now:hover {
+  background: var(--primary-dark);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* ── Order Section ── */
+.order-section {
+  background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 100%);
+}
+
+.order-card {
+  background: white;
+  border-radius: var(--card-radius);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+}
+
+/* ── Price Preview Box ── */
+.price-preview {
+  background: var(--primary-light);
+  border: 1px solid #e8c3d5;
+  border-radius: 10px;
+  padding: 12px 18px;
+}
+
+/* ── Primary Button Override ── */
+.btn-primary {
+  background: var(--primary) !important;
+  border-color: var(--primary) !important;
+  border-radius: 50px;
+  font-weight: 600;
+  transition: var(--transition);
+}
+.btn-primary:hover {
+  background: var(--primary-dark) !important;
+  border-color: var(--primary-dark) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(181, 70, 122, 0.35);
+}
+
+/* ── Cart Modal ── */
+.cart-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 12px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.cart-item img {
+  width: 65px; height: 80px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.cart-empty {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-muted);
+}
+
+/* ── Admin Dashboard ── */
+.admin-stat-card {
+  border: none;
+  border-radius: var(--card-radius);
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: var(--transition);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+}
+
+.admin-stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.12);
+}
+
+.stat-icon {
+  width: 56px; height: 56px;
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.stat-label { font-size: 0.82rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; }
+.stat-value  { font-size: 1.6rem; font-weight: 800; color: var(--dark); line-height: 1; }
+
+/* ── Admin Tables ── */
+.admin-table {
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+}
+
+.admin-table thead {
+  background: var(--dark);
+  color: white;
+}
+
+.admin-table tbody tr:hover {
+  background: var(--primary-light);
+}
+
+/* ── Admin Form Card ── */
+.admin-form-card {
+  background: white;
+  border-radius: var(--card-radius);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  padding: 1.8rem;
+  border-top: 4px solid var(--accent);
+}
+
+.admin-section-header {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  color: var(--dark);
+  padding-bottom: 10px;
+  border-bottom: 2px solid var(--primary-light);
+  margin-bottom: 1.5rem;
+}
+
+/* ── Status Badges ── */
+.status-pending   { background: #fff3cd; color: #856404; }
+.status-confirmed { background: #cfe2ff; color: #084298; }
+.status-delivered { background: #d1e7dd; color: #0f5132; }
+.status-cancelled { background: #f8d7da; color: #842029; }
+
+/* ── Footer ── */
+.footer-section {
+  background: var(--dark);
+}
+
+/* ── Responsive Tweaks ── */
+@media (max-width: 768px) {
+  .hero-section { min-height: 70vh; }
+  .section-title { font-size: 1.7rem; }
+  .product-img-wrapper { height: 220px; }
+}
