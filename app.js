@@ -260,13 +260,13 @@ function selectProductInForm(productId) {
    PRICE PREVIEW (live update)
 ──────────────────────────────── */
 function updatePricePreview() {
-  const productId = parseInt(document.getElementById('productSelect').value);
+  const productId = document.getElementById('productSelect').value;
   const quantity  = parseInt(document.getElementById('quantity').value) || 1;
   const preview   = document.getElementById('pricePreview');
   const display   = document.getElementById('totalDisplay');
 
   if (productId) {
-    const product = allProducts.find(p => p.id === productId);
+    const product = allProducts.find(p => p.id == productId);
     if (product) {
       display.textContent = `Rs. ${(product.price * quantity).toLocaleString()}`;
       preview.classList.remove('d-none');
@@ -368,9 +368,15 @@ async function submitOrder(e) {
 
   if (!validateOrderForm()) return;
 
-  const productId  = parseInt(document.getElementById('productSelect').value);
-  const product    = allProducts.find(p => p.id === productId);
+  const productId  = document.getElementById('productSelect').value;
+  const product    = allProducts.find(p => p.id == productId);
   const quantity   = parseInt(document.getElementById('quantity').value);
+
+  if (!product) {
+    showFieldError("productSelect", "Product not found. Please refresh the page.");
+    return;
+  }
+
 
   const newOrder = {
     customerName: document.getElementById('customerName').value.trim(),
@@ -444,3 +450,4 @@ document.addEventListener('DOMContentLoaded', () => {
   updateCartBadge();
   document.getElementById('orderForm').addEventListener('submit', submitOrder);
 });
+
